@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <title>Třídní kniha</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="Styl.css"  />
+
+</head>
+<body>
+
+<div class="container-fluid p-5 text-white text-center" id="nadpis">
+  <h1>Elektronická třídní kniha</h1>
+</div>
+
+<br />
+
+
+<div class="container mt-5"> 
+    <div class="row">
+        <div id="root"></div>
+    </div>
+</div>
+
+
+<script type="text/babel">
+
+function Card(props){
+        return(
+            <div className="card">
+            <div className="card-header"><h2>Přítomnost</h2></div>
+            <div className="card-body">
+              {props.children}
+            </div>
+            <div className="card-footer"></div>
+          </div>
+        )
+    }
+
+    function StudentRow(props){
+        const possibleValues=[
+        {value:'present', label: 'Přítomen'},
+        {value:'ill', label: 'Nemoc'},
+        {value:'vacation', label: 'Dovolená'},
+        {value:'duty', label: 'Služba'},];
+        return(
+            <tr>
+                <td> {props.student.name}</td>
+                <td> {props.student.surname}</td>
+                <td> 
+                    <select value={props.prt.value} onChange={(e)=>props.onPresentionChange(props.student.id, e.target.value, props.lekce.id)}>
+                        {possibleValues.map((item,index)=>(<option value={item.value} key={index}>{item.label} </option>))}
+                    </select>
+                </td>
+            </tr>
+        )
+    }
+    function Table(props) {
+        const dataRows = props.data;
+        //  { 'student':{'name': 'Petr', 'surname': 'Novák','id': 1023}, 'lekce':{'id':40732,'label': 'sqldatebase'}, 'prt': {'id': 2, 'value':'present'}},
+        return (
+            <table className='table'>
+                <thead>
+                    <tr>
+                        <th>Jméno</th>
+                        <th>Příjmení</th>
+                        <th>Přítomnost</th>
+                    </tr>
+                    </thead>
+                <tbody>
+                    {dataRows.map((row, index) =>(<StudentRow {...row} key={index} onPresentionChange={props.onPresentionChange}/>                      
+                    ))}
+                </tbody>
+            </table> 
+        )
+    }
+
+
+    function EntityLarge(props){
+        return(
+        <Card>
+            <Table data = {props.data} onPresentionChange={props.onPresentionChange}/> 
+        </Card> 
+     )
+    }
+    function EntityStoryBook(props){
+        const data=[
+            {'name': 'John', 'surname': 'Newbie', 'prt': '+'},
+            {'name': 'Julia', 'surname': 'Meeks', 'prt': '+'}
+        ];
+    return(
+       <EntityLarge
+        data = {data} 
+        {...props}
+        />
+     )
+    }
+
+    function Page(props) { 
+        const [data, setData] = React.useState([])
+
+        React.useEffect(
+        () => {
+                const dataFromServer = [
+                    
+                    { 'student':{'name': 'Petr', 'surname': 'Novák','id': 1023}, 'lekce':{'id':40732,'label': 'sqldatebase', 'date': '25.2.2022'}, 'prt': {'id': 2, 'value':'ill'}},
+                    { 'student':{'name': 'Petra', 'surname': 'Nováková','id': 1024}, 'lekce':{'id':40732,'label': 'sqldatebase', 'date': '25.2.2022'}, 'prt': {'id': 2, 'value':'present'}},
+                    { 'student':{'name': 'Petr', 'surname': 'Novák','id': 1023}, 'lekce':{'id':40733,'label': 'nosqldatebase', 'date': '24.2.2022'}, 'prt': {'id': 2, 'value':'vacation'}},] 
+                setData(dataFromServer)
+            }, [props.id]
+        )
+
+        const onAdd = (dataRow) => {
+            setData([...data, dataRow])
+        }
+
+        function ZmenaPritomnosti(idStudent, idPrt, idLekce){
+            console.log(idStudent, idPrt, idLekce)
+            const newData = data.map((item)=>({...item, 'prt':{'value': item.student.id === idStudent && item.lekce.id === idLekce ? idPrt:item.prt.value}}))
+            setData(newData)
+        }
+
+        return(
+            <>
+            <EntityStoryBook {...props} data={data} onAdd={onAdd} onPresentionChange={ZmenaPritomnosti}/>
+            </>
+        )
+    }
+
+    function App(props) {
+        return (
+            <Page id={1}/>
+        )
+    }
+
+</script>
+
+<script type="text/babel">
+  ReactDOM.render(
+    <App />,
+    document.getElementById('root')
+  );
+</script>
+
+
+</body>
+</html>
