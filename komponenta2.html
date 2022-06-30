@@ -39,7 +39,7 @@
 <script type="text/babel">
 
 
-    function Card2(props){
+    function Card(props){
         return(
             <div className="card">
             <div className="card-header"><h2>Celková přítomnost</h2></div>
@@ -115,6 +115,13 @@
                 {'student':{'id':591, 'name': 'Jill'}, 'prt': 'D'},
                 {'student':{'id':592, 'name': 'June'}, 'prt': 'D'},
                 {'student':{'id':593, 'name': 'Julia'}, 'prt': 'D'},
+            ]},
+            {'id':3,'name':'NoSQL', 'duration': 6, 'pritomnost': [
+                {'student':{'id':589, 'name': 'john'}, 'prt': 'N'},
+                {'student':{'id':590, 'name': 'Jack'}, 'prt': 'S'},
+                {'student':{'id':591, 'name': 'Jill'}, 'prt': 'S'},
+                {'student':{'id':592, 'name': 'June'}, 'prt': 'N'},
+                {'student':{'id':593, 'name': 'Julia'}, 'prt': '+'},
             ]}] 
                 setData(dataFromServer)
             }, [props.id]
@@ -130,9 +137,7 @@
     }
     function LekceCol(props){
         return(
-
             <th>{props.name}</th>
-        
         )
     }
 
