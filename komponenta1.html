@@ -51,14 +51,15 @@ function Card(props){
     }
 
     function StudentRow(props){
-        const possibleValues=[
+        const possibleValues=[  //možnosti v selectu
         {value:'present', label: 'Přítomen'},
         {value:'ill', label: 'Nemoc'},
         {value:'vacation', label: 'Dovolená'},
         {value:'duty', label: 'Služba'},];
-        return(
+        return(  
+            //vrací jméno, příjmení a select přítomnosti
             <tr>
-                <td> {props.student.name}</td>
+                <td> {props.student.name}</td> 
                 <td> {props.student.surname}</td>
                 <td> 
                     <select value={props.prt.value} onChange={(e)=>props.onPresentionChange(props.student.id, e.target.value, props.lekce.id)}>
@@ -71,6 +72,7 @@ function Card(props){
     function Table(props) {
         const dataRows = props.data;
         return (
+            //varcí tabulku
             <table className='table'>
                 <thead>
                     <tr>
@@ -89,8 +91,8 @@ function Card(props){
 
 
     function EntityLarge(props){
-        return(
-        <Card>
+        return(//dává data do table
+        <Card> 
             <Table data = {props.data} onPresentionChange={props.onPresentionChange}/> 
         </Card> 
      )
@@ -113,7 +115,7 @@ function Card(props){
 
         React.useEffect(
         () => {
-                const dataFromServer = [
+                const dataFromServer = [ //bere data ze serveru
                     
                     { 'student':{'name': 'Petr', 'surname': 'Novák','id': 1023}, 'lekce':{'id':40732,'label': 'sqldatebase', 'date': '25.2.2022'}, 'prt': {'id': 2, 'value':'ill'}},
                     { 'student':{'name': 'Petra', 'surname': 'Nováková','id': 1024}, 'lekce':{'id':40732,'label': 'sqldatebase', 'date': '25.2.2022'}, 'prt': {'id': 2, 'value':'present'}},
@@ -122,11 +124,8 @@ function Card(props){
             }, [props.id]
         )
 
-        const onAdd = (dataRow) => {
-            setData([...data, dataRow])
-        }
-
         function ZmenaPritomnosti(idStudent, idPrt, idLekce){
+            //mění přítomnost
             console.log(idStudent, idPrt, idLekce)
             const newData = data.map((item)=>({...item, 'prt':{'value': item.student.id === idStudent && item.lekce.id === idLekce ? idPrt:item.prt.value}}))
             setData(newData)
@@ -134,7 +133,7 @@ function Card(props){
 
         return(
             <>
-            <EntityStoryBook {...props} data={data} onAdd={onAdd} onPresentionChange={ZmenaPritomnosti}/>
+            <EntityStoryBook {...props} data={data} onPresentionChange={ZmenaPritomnosti}/>
             </>
         )
     }

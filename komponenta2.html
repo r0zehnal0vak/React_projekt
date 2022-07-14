@@ -38,28 +38,6 @@
 
 <script type="text/babel">
 
-
-    function Card(props){
-        return(
-            <div className="card">
-            <div className="card-header"><h2>Celková přítomnost</h2></div>
-            <div className="card-body">
-              {props.children}
-            </div>
-            <div className="card-footer"></div>
-          </div>
-        )
-    }
-
-    function PritomnostRow(props){
-        return(
-            <tr>
-                <td>{props.student.name} {props.student.surname}</td>
-            </tr>
-        )
-    }
-
-
     function EntityLarge(props){
         return(
             <div className="card">
@@ -72,7 +50,7 @@
     )
     }
     function EntityStoryBook(props){
-        const data2 = [
+        const data2 = [                     //vytvoření dat
             {'id': 1, 'name': 'Intruduction', 'duration': 2, 'pritomnost':[
                 {'student':{'id':589, 'name': 'john'}, 'prt': '+'},
                 {'student':{'id':590, 'name': 'Jack'}, 'prt': '+'},
@@ -86,8 +64,7 @@
                 {'student':{'id':591, 'name': 'Jill'}, 'prt': 'D'},
                 {'student':{'id':592, 'name': 'June'}, 'prt': 'D'},
                 {'student':{'id':593, 'name': 'Julia'}, 'prt': 'D'},
-            ]}]
-         
+            ]}]     
     return(
        <EntityLarge
         data = {data2}
@@ -101,7 +78,7 @@
 
         React.useEffect(
         () => {
-                const dataFromServer = [
+                const dataFromServer = [            //dostaneme data ze serveru a přepíšeme naše data
                 {'id': 1, 'name': 'Intruduction', 'duration': 2, 'pritomnost':[
                 {'student':{'id':589, 'name': 'john'}, 'prt': '+'},
                 {'student':{'id':590, 'name': 'Jack'}, 'prt': '+'},
@@ -123,12 +100,9 @@
                 {'student':{'id':592, 'name': 'June'}, 'prt': 'N'},
                 {'student':{'id':593, 'name': 'Julia'}, 'prt': '+'},
             ]}] 
-                setData(dataFromServer)
-            }, [props.id]
+                setData(dataFromServer)     //'push' dat
+            }, [props.id]                   
         )
-
-    
-
         return(
             <>
             <EntityStoryBook {...props} data={data} />
@@ -137,15 +111,14 @@
     }
     function LekceCol(props){
         return(
-            <th>{props.name}</th>
+            <th>{props.name}</th>       //popisky lekcí v záhlaví tabulky
         )
     }
 
     function StudentRow(props){
         const lessons = props.lessons;
 
-        const CountSumForStudent = () => {
-            //let resultPritomen, resultDovolena, resultNemoc, resultSluzba = 0
+        const CountSumForStudent = () => {      //výpočet 
 
             let resultPritomen = 0
             let resultDovolena = 0
@@ -155,7 +128,7 @@
             for (let i = 0; i < lessons.length; i++) {
                 const currentLesson = lessons[i]
                 if (currentLesson.prt === '+') {
-                    resultPritomen = resultPritomen + currentLesson.duration 
+                    resultPritomen = resultPritomen + currentLesson.duration       //suma trvání lekcí u konkréřní přítomnost
                 }
                 else if (currentLesson.prt === 'D') {
                     resultDovolena = resultDovolena + currentLesson.duration
@@ -167,40 +140,24 @@
                     resultSluzba = resultSluzba + currentLesson.duration
                 }
             }
-            return resultPritomen + "+, " + resultNemoc + "N, " + resultDovolena + "D, " + resultSluzba + "S"
+            return resultPritomen + "+, " + resultNemoc + "N, " + resultDovolena + "D, " + resultSluzba + "S"   //výpis (SUMA + '+, ')
         }
-
         return(
+            //podmínka pokud je přítomnost rovna +, pak pole bude zelené, pokud se nerovná bude oranžové
+            //přiřazení šedivé barvy pro celkem
             <tr>
                 <td>{props.name}</td>
                 {lessons.map(
                     lesson => lesson.prt === '+' ? (<td className='bg-success' key={lesson.id}>{lesson.prt}</td>) :  (<td className='bg-warning' key={lesson.id}>{lesson.prt}</td>)
                 )}
-                <td className='bg-secondary' >{CountSumForStudent()}</td>
+                <td className='bg-secondary' >{CountSumForStudent()}</td>      
             </tr>
         )
     }
 
     function PritomnostSemestr(props) {
         const lessons = props.data;
-/*
-    [
-        {'id': 1, 'name': 'Intruduction', 'duration': 2, 'pritomnost':[
-            {'student':{'id':589, 'name': 'john'}, 'prt': '+'},
-            {'student':{'id':590, 'name': 'Jack'}, 'prt': '+'},
-            {'student':{'id':591, 'name': 'Jill'}, 'prt': '+'},
-            {'student':{'id':592, 'name': 'June'}, 'prt': '+'},
-            {'student':{'id':593, 'name': 'Julia'}, 'prt': '+'},
-        ]},
-        {'id':2,'name':'SQL', 'duration': 6, 'pritomnost': [
-            {'student':{'id':589, 'name': 'john'}, 'prt': '+'},
-            {'student':{'id':590, 'name': 'Jack'}, 'prt': 'D'},
-            {'student':{'id':591, 'name': 'Jill'}, 'prt': 'D'},
-            {'student':{'id':592, 'name': 'June'}, 'prt': 'D'},
-            {'student':{'id':593, 'name': 'Julia'}, 'prt': 'D'},
-        ]}
-    ]
-*/
+
         const students = []; //jmeno, id
 
         for(let i = 0; i < lessons.length; i++){
@@ -213,17 +170,10 @@
                 const record = students.find(item => item.id === student.id)
                 if (!record) {
                     students.push(student)
+                    //console.log(student)
                 }
             }
         }
-
-        /*
-        const pritomnosti = lessons.map(lesson => lesson.pritomnost).flat()
-        const students2 = pritomnosti.map(pritomnost => pritomnost.student) 
-        const uniqueStudents = {}
-        students2.forEach(student => uniqueStudents[student.id] = student)
-        const uniqueStudents2 = Object.values(uniqueStudents)
-        */
 
         let studentsWithLessons = []
         for(let i = 0; i < students.length; i++){
@@ -240,46 +190,26 @@
             }
             //Tady konci funkce
             studentsWithLessons.push(student)
+            //console.log(student)
         }
-
-        /*
-        const operationOnStudent = (currentStudent) => {
-            const student = {...currentStudent, lessons: []}
-            
-            for(let j = 0; j < lessons.length; j++) {
-                const currentLesson = lessons[j]
-                
-                const pritomnost = currentLesson.pritomnost.find(item => item.student.id === student.id)
-                student.lessons.push({id: currentLesson.id, name: currentLesson.name, duration: currentLesson.duration, prt: pritomnost.prt})
-            }
-
-            return extendedStudent
-        }
-
-        const studentsWithLessons2 = students.map(student => operationOnStudent(student))
-        */
-
-
         return(
             <table className='table table-striped table-hover'>
                 <thead>
                     <tr>
                         <th>Student</th>
-                        {lessons.map((lesson, index) =>(<LekceCol {...lesson} key={lesson.id}/>))}
+                        {lessons.map((lesson, index) =>(<LekceCol {...lesson} key={lesson.id}/> //nalezení názvu lekce
+                        ))}
                         <th>Celkem</th>   
                     </tr>
                     </thead>
                 <tbody>
-
-                 {studentsWithLessons.map(student => (
+                 {studentsWithLessons.map(student => (      // podle studenta nalezne přítomnost
                     <StudentRow key={student.id} {...student}/>
                  ))}
-
-
                 </tbody>
             </table> 
         )
-    }//{dataRows.map((row, index) =>(<PritomnostRow {...row} key={index}/>))}
+    }
 
     function App(props) {
         return (
